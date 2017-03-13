@@ -1,4 +1,4 @@
-;;; elpass.el --- Elisp LastPASS -*- lexical-binding: t -*-
+;;; elpass.el --- LastPass command wrapper -*- lexical-binding: t -*-
 
 ;; Copyright © 2017
 
@@ -7,7 +7,7 @@
 ;; Version: 0.1.0
 ;; Created: 2017-02-17
 ;; Package-Requires: ((emacs "24.4"))
-;; Keywords: lpass lastpass elpass
+;; Keywords: extensions processes lpass lastpass elpass
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -49,9 +49,6 @@
 ;; For more information, see the readme at https://github.com/storvik/elpass
 
 ;;; Code:
-
-;; Must be implemented
-;; - Update / redraw
 
 (require 'tree-widget)
 
