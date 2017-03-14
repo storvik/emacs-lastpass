@@ -89,7 +89,7 @@
 (defun lastpass-runcmd (cmd &rest args)
   "Run lpass command CMD with ARGS."
   (with-temp-buffer
-    (list (apply 'call-process (concat lastpass-location "lpass") nil (current-buffer) nil (cons cmd args))
+    (list (apply 'call-process (concat lastpass-location "lpass") nil (current-buffer) nil (cons (shell-quote-argument cmd) args))
           (replace-regexp-in-string "\n$" ""
                                     (buffer-string)))))
 
@@ -203,7 +203,7 @@ Optionally URL and GROUP can be set to nil."
         (when (and group
                    (> (length group) 0))
           (setq account (concat group "/" account))
-          (setq account (replace-regexp-in-string " " "\\ " account t t)))
+          (setq account (shell-quote-argument account)))
         (unless (equal (nth 0 (lastpass-pipe-to-cmd "add" inputstr account)) 0)
           (error "LastPass: Could not add account")))
     ;; Add account and generate password
