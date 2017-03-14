@@ -1,4 +1,4 @@
-# ELPASS - Emacs LastPASS
+# Emacs LastPass
 
 A lastpass command wrapper for Emacs.
 Includes an interactive LastPass mode for managing accounts and some useful functions which can be used to include LastPass in your settings and configurations.
@@ -6,18 +6,18 @@ Includes an interactive LastPass mode for managing accounts and some useful func
 ## Installation
 
 To use this package the [LastPass CLI](https://github.com/lastpass/lastpass-cli) must be installed.
-The easiest way to install and configure elpass is to include this in your init.
+The easiest way to install and configure emacs lastpass is to include this in your init.
 
 ``` emacs-lisp
-(use-package elpass
+(use-package lastpass
   :config
-  (setq lpass-user "foobar@foobar.com"))
+  (setq lastpass-user "foobar@foobar.com"))
 ```
 
 # LastPass manager
 
-Interactive lpass manager can be invoked with `M-x elpass-list-all`.
-Actions in `elpass-list-all`:
+Interactive lpass manager can be invoked with `M-x lastpass-list-all`.
+Actions in `lastpass-list-all`:
 - `n` next line
 - `p` previod line
 - `r` reload accounts
@@ -32,44 +32,44 @@ Actions in `elpass-list-all`:
 
 Functions that can be run interactively by the `M-x` interface.
 
-#### elpass-login
+#### lastpass-login
 
 Runs lpass login asynchronously and asks user for password.
 Note that since this is an asynchronous process it will NOT wait for user input to continue.
 
-#### elpass-logout
+#### lastpass-logout
 
 Logs out of lpass using the --force option.
 Good practice to do this whenever lpass functions aren't needed.
 
-#### elpass-status
+#### lastpass-status
 
-Check if `elpass-user` is logged in and prints message to minibuffer.
+Check if `lastpass-user` is logged in and prints message to minibuffer.
 
-#### elpass-getpass (account)
+#### lastpass-getpass (account)
 
 Display password for given account.
 `account` can be either account id or account name.
 
-#### elpass-addpass (account user password url group)
+#### lastpass-addpass (account user password url group)
 
 Add account to LastPass.
 Account name, user and password must be specified, but url and group can be set to `nil`.
 When run interactively user is prompted for input.
 If password is set to `nil`, or empty string when run interactive, it will be generated.
-Default length is set in `elpass-pass-length` and no symbols can be turned on with `elpass-no-symbols`.
+Default length is set in `lastpass-pass-length` and no symbols can be turned on with `lastpass-no-symbols`.
 
 ## Other functions
 
 Functions that can't be run invteractively.
 
-#### elpass-runcmd (cmd &rest args)
+#### lastpass-runcmd (cmd &rest args)
 
 Run lpass command `cmd` with arguments `args`.
 Returns a list containing return code and return string, (returncode, returnstring).
-Can be used to run custom lpass commmand not implementet in `elpass.el`.
+Can be used to run custom lpass commmand not implementet in `lastpass.el`.
 
-#### elpass-pipe-to-cmd (cmd prepend &rest args)
+#### lastpass-pipe-to-cmd (cmd prepend &rest args)
 
 Pipe `prepend` to lpass command `cmd` with arguments `args`.
 Returns a list containing return code and return string, (returncode, returnstring).
@@ -77,7 +77,7 @@ The prepend string must be formatted to correspond with lpass notation, see `man
 Can for example be used to add account to LastPass:
 
 ``` emacs-lisp
-(elpass-pipe-to-cmd "add" "Username: Foo\nPassword: bar" "FooBarAccount")
+(lastpass-pipe-to-cmd "add" "Username: Foo\nPassword: bar" "FooBarAccount")
 ```
 
 This corresponds to the following shell command:
@@ -87,7 +87,7 @@ printf "Username: Foo\nPassword: bar" | \
     lpass add FooBarAccount --non-interactive
 ```
 
-#### elpass-logged-in
+#### lastpass-logged-in
 
 Check if `lpass-user` is logged in.
 Returns `nil` if user not logged in.
@@ -99,12 +99,12 @@ Check if logged in to LastPass before running mu4e update.
 Continues with update if user is logged in and asks user to log in if not.
 
 ``` emacs-lisp
-(defun elpass-mu4e-update-mail-and-index (update-function &rest r)
-    (if (elpass-logged-in)
+(defun lastpass-mu4e-update-mail-and-index (update-function &rest r)
+    (if (lastpass-logged-in)
         (apply update-function r)
       (progn
         (message "LastPass: Not logged in, log in and retry")
-        (elpass-login))))
+        (lastpass-login))))
 
-(advice-add 'mu4e-update-mail-and-index :around #'elpass-mu4e-update-mail-and-index)
+(advice-add 'mu4e-update-mail-and-index :around #'lastpass-mu4e-update-mail-and-index)
 ```
