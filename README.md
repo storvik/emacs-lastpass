@@ -1,5 +1,7 @@
 # Emacs LastPass
 
+[![MELPA](https://melpa.org/packages/lastpass-badge.svg)](https://melpa.org/#/lastpass)
+
 A lastpass command wrapper for Emacs.
 Includes an interactive LastPass mode for managing accounts and some useful functions which can be used to include LastPass in your settings and configurations.
 
