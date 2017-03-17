@@ -63,11 +63,6 @@
   :type 'string
   :group 'lastpass)
 
-(defcustom lastpass-location "/usr/local/bin/"
-  "Lastpass command line location."
-  :type 'string
-  :group 'lastpass)
-
 (defcustom lastpass-shell "/bin/bash"
   "Shell to be used when running LastPass commands."
   :type 'string
@@ -89,7 +84,7 @@
 (defun lastpass-runcmd (cmd &rest args)
   "Run lpass command CMD with ARGS."
   (with-temp-buffer
-    (list (apply 'call-process (concat lastpass-location "lpass") nil (current-buffer) nil (cons cmd args))
+    (list (apply 'call-process "lpass" nil (current-buffer) nil (cons cmd args))
           (replace-regexp-in-string "\n$" ""
                                     (buffer-string)))))
 
@@ -99,7 +94,8 @@ Can for example be used with lpass add and the following prepended string:
 Username: testuser\nPassword: testpassword.  Returns a list with status code
 and returned string from lpass command."
   (with-temp-buffer
-    (let ((command (concat "printf \"" prepend "\"" " | " lastpass-location "lpass " (mapconcat 'identity (cons cmd args) " ") " --non-interactive")))
+    (let ((command (concat "printf \"" prepend 
+"\"" " | lpass " (mapconcat 'identity (cons cmd args) " ") " --non-interactive")))
       (list (apply 'call-process-shell-command command nil (current-buffer) nil)
             (replace-regexp-in-string "\n$" "" (buffer-string))))))
 
@@ -124,7 +120,6 @@ and returned string from lpass command."
                   (concat "LPASS_DISABLE_PINENTRY=1 "
                           lastpass-shell
                           " -c '"
-                          lastpass-location
                           "lpass login "
                           lastpass-user
                           "'"))))
