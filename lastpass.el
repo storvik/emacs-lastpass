@@ -89,7 +89,7 @@
 (defun lastpass-runcmd (cmd &rest args)
   "Run lpass command CMD with ARGS."
   (with-temp-buffer
-    (list (apply 'call-process (concat lastpass-location "lpass") nil (current-buffer) nil (cons (shell-quote-argument cmd) args))
+    (list (apply 'call-process (concat lastpass-location "lpass") nil (current-buffer) nil (cons cmd args))
           (replace-regexp-in-string "\n$" ""
                                     (buffer-string)))))
 
