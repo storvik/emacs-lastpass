@@ -142,7 +142,7 @@ and returned string from lpass command."
   (let ((ret (lastpass-runcmd "status")))
     (message "LastPass status: %s" (nth 1 ret))))
 
-(defun lastpass-logged-in ()
+(defun lastpass-logged-in-p ()
   "Check if `lastpass-user' is logged in to LastPass.
 Returns nil if not logged in."
   (let ((ret (lastpass-runcmd "status")))

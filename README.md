@@ -89,7 +89,7 @@ printf "Username: Foo\nPassword: bar" | \
     lpass add FooBarAccount --non-interactive
 ```
 
-#### lastpass-logged-in
+#### lastpass-logged-in-p
 
 Check if `lpass-user` is logged in.
 Returns `nil` if user not logged in.
