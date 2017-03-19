@@ -94,8 +94,11 @@ Can for example be used with lpass add and the following prepended string:
 Username: testuser\nPassword: testpassword.  Returns a list with status code
 and returned string from lpass command."
   (with-temp-buffer
-    (let ((command (concat "printf \"" prepend 
-"\"" " | lpass " (mapconcat 'identity (cons cmd args) " ") " --non-interactive")))
+    (let ((command (concat "printf \""
+                           prepend
+                           "\"" " | lpass "
+                           (mapconcat 'identity (cons cmd args) " ")
+                           " --non-interactive")))
       (list (apply 'call-process-shell-command command nil (current-buffer) nil)
             (replace-regexp-in-string "\n$" "" (buffer-string))))))
 
@@ -421,9 +424,9 @@ If optional argument GROUP is given, only entries in GROUP will be listed."
              :indent 0
              :format "\n%v\n"
              ,@(lastpass-list-all-items (split-string (nth 1 (if (not group)
-                                                                        (lastpass-runcmd "ls" "--long")
-                                                                      (lastpass-runcmd "ls" "--long" group)))
-                                                    "\\(\r\n\\|[\n\r]\\)"))))
+                                                                 (lastpass-runcmd "ls" "--long")
+                                                               (lastpass-runcmd "ls" "--long" group)))
+                                                      "\\(\r\n\\|[\n\r]\\)"))))
     (widget-create
      'push-button
      :notify 'lastpass-list-cancel-dialog
