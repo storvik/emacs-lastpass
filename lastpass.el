@@ -50,6 +50,9 @@
 
 ;;; Code:
 
+(require 'auth-source)
+(require 'cl-lib)
+(require 'seq)
 (require 'tree-widget)
 
 (defgroup lastpass nil
@@ -432,6 +435,70 @@ If optional argument GROUP is given, only entries in GROUP will be listed."
      :notify 'lastpass-list-cancel-dialog
      "Cancel")
     (goto-char (point-min))))
+
+;; Auth-source functions
+(cl-defun lastpass-auth-source-search (&rest spec
+                                             &key backend type host user port
+                                             &allow-other-keys)
+  "Given a property list SPEC, return search matches from the :backend.
+See `auth-source-search' for details on SPEC."
+  (message "cl-defun run")
+  (cl-assert (or (null type) (eq type (oref backend type)))
+             t "Invalid password-store search: %s %s")
+  (when (listp host)
+    ;; Take the first non-nil item of the list of hosts
+    (setq host (seq-find #'identity host)))
+  (list (lastpass-auth-source--build-result host port user)))
+
+(defun lastpass--getid (account)
+  "Get id associated with ACCOUNT."
+  (let ((ret (lastpass-runcmd "show" "--id" account)))
+    (when (equal (nth 0 ret) 0)
+      (nth 1 ret))))
+
+(defun lastpass-auth-source--build-result (host port user)
+  "Build auth-source entry matching HOST, PORT and USER."
+  (message "%s - %s - %s" host port user)
+  (let ((id (lastpass--getid host)))
+    (when id
+      (let ((retval (list
+                     :host host
+                     ;;:host (nth 1 (lastpass-runcmd "show" "--note" id))
+                     ;;:host (or (nth 1 (lastpass-runcmd "show" "--note" "Google")) host)
+                     :port port
+                     :user (nth 1 (lastpass-runcmd "show" "--user" id))
+                     :secret (lastpass-getpass id))))
+        (message "%s" retval)
+        retval))))
+
+;;;###autoload
+(defun lastpass-auth-source-enable ()
+  "Enable lastpass auth-source.."
+  (interactive)
+  ;; To add password-store to the list of sources, evaluate the following:
+  (add-to-list 'auth-sources 'lastpass)
+  ;; clear the cache (required after each change to #'auth-pass-search)
+  (auth-source-forget-all-cached))
+
+;; First lastpass may be removed
+(defvar lastpass-auth-source-backend
+  (auth-source-backend "lastpass"
+                       :source "." ;; not used
+                       :type 'lastpass
+                       :search-function #'lastpass-auth-source-search)
+  "Auth-source backend for password-store.")
+
+(defun lastpass-auth-source-backend-parse (entry)
+  "Create auth-source backend from ENTRY."
+  (message "backend-parse run - %s" entry)
+  (when (eq entry 'lastpass)
+    (message "backend-parse lastpass true")
+    (auth-source-backend-parse-parameters entry lastpass-auth-source-backend)))
+
+;; Advice to add custom auth-source function
+(if (boundp 'auth-source-backend-parser-functions)
+    (add-hook 'auth-source-backend-parser-functions #'lastpass-auth-source-backend-parse)
+  (advice-add 'auth-source-backend-parse :before-until #'lastpass-auth-source-backend-parse))
 
 (provide 'lastpass)
 ;;; lastpass.el ends here
