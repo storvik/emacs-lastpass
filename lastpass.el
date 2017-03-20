@@ -460,6 +460,7 @@ See `auth-source-search' for details on SPEC."
   "Build auth-source entry matching HOST, PORT and USER."
   (message "%s - %s - %s" host port user)
   (let ((id (lastpass--getid host)))
+    (message "build result id: %s" id)
     (when id
       (let ((retval (list
                      :host host
