@@ -7,7 +7,6 @@ LOAD = -l lastpass.el
 all: test
 
 test:
-	@echo "Using $(shell which $(emacs))..."
 	$(emacs) -batch $(LOAD) -f ert-run-tests-batch-and-exit
 
 run:
