@@ -4,7 +4,7 @@
 
 ;; Author: Petter Storvik
 ;; URL: https://github.com/storvik/lastpass
-;; Version: 0.1.0
+;; Version: 0.2.0
 ;; Created: 2017-02-17
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: extensions processes lpass lastpass
@@ -29,7 +29,15 @@
 ;;; Commentary:
 
 ;; This package contains a wrapper for the LastPass command line utility
-;; lpass.
+;; lpass and a custom auth-source.
+;;
+;; Auth-source functionality relies on an adviced function, `auth-source-backend-parse'.
+;; Can for example be used to get smtpmail to use LastPass instead of authinfo file.
+;; To use this auth-source, LastPass account name must be set to match the host.
+;; One way to achieve this is to keep a separate group in LastPass called auth-source
+;; where all hosts are stored.  To enable LastPass auth-source, run
+;; `lastpass-auth-source-enable'.  Thanks to DamienCassou for help, see:
+;; https://github.com/DamienCassou/auth-password-store
 ;;
 ;; Several functions used for interacting with lpass in Emacs are
 ;; made available to the user through the "M-x" interface.
@@ -223,6 +231,12 @@ Optionally URL and GROUP can be set to nil."
       (apply 'lastpass-runcmd arguments)))
   (message "LastPass: Account \"%s\" added" account)
   (lastpass-list-all-reload))
+
+(defun lastpass-getid (account)
+  "Get id associated with ACCOUNT."
+  (let ((ret (lastpass-runcmd "show" "--id" account)))
+    (when (equal (nth 0 ret) 0)
+      (nth 1 ret))))
 
 ;; lpass-list-dialog-mode
 (defvar lastpass-list-dialog-mode-map
@@ -442,58 +456,40 @@ If optional argument GROUP is given, only entries in GROUP will be listed."
                                              &allow-other-keys)
   "Given a property list SPEC, return search matches from the :backend.
 See `auth-source-search' for details on SPEC."
-  (message "cl-defun run")
   (cl-assert (or (null type) (eq type (oref backend type)))
-             t "Invalid password-store search: %s %s")
+             t "Invalid search: %s %s")
   (when (listp host)
     ;; Take the first non-nil item of the list of hosts
     (setq host (seq-find #'identity host)))
   (list (lastpass-auth-source--build-result host port user)))
 
-(defun lastpass--getid (account)
-  "Get id associated with ACCOUNT."
-  (let ((ret (lastpass-runcmd "show" "--id" account)))
-    (when (equal (nth 0 ret) 0)
-      (nth 1 ret))))
-
 (defun lastpass-auth-source--build-result (host port user)
-  "Build auth-source entry matching HOST, PORT and USER."
-  (message "%s - %s - %s" host port user)
-  (let ((id (lastpass--getid host)))
-    (message "build result id: %s" id)
+  "Get id of the account matchin HOST and build auth-source with HOST, PORT and USER."
+  (let ((id (lastpass-getid host)))
     (when id
-      (let ((retval (list
-                     :host host
-                     ;;:host (nth 1 (lastpass-runcmd "show" "--note" id))
-                     ;;:host (or (nth 1 (lastpass-runcmd "show" "--note" "Google")) host)
-                     :port port
-                     :user (nth 1 (lastpass-runcmd "show" "--user" id))
-                     :secret (lastpass-getpass id))))
-        (message "%s" retval)
-        retval))))
+      (list
+       :host host
+       :port port
+       :user (or user (nth 1 (lastpass-runcmd "show" "--user" id)))
+       :secret (lastpass-getpass id)))))
 
 ;;;###autoload
 (defun lastpass-auth-source-enable ()
-  "Enable lastpass auth-source.."
+  "Enable lastpass auth-source by adding it to `auth-sources'."
   (interactive)
-  ;; To add password-store to the list of sources, evaluate the following:
   (add-to-list 'auth-sources 'lastpass)
-  ;; clear the cache (required after each change to #'auth-pass-search)
-  (auth-source-forget-all-cached))
+  (auth-source-forget-all-cached)
+  (message "LastPass: auth-source enabled"))
 
-;; First lastpass may be removed
 (defvar lastpass-auth-source-backend
-  (auth-source-backend "lastpass"
-                       :source "." ;; not used
+  (auth-source-backend :source "." ;; not used
                        :type 'lastpass
                        :search-function #'lastpass-auth-source-search)
-  "Auth-source backend for password-store.")
+  "Auth-source backend variable for lastpass.")
 
 (defun lastpass-auth-source-backend-parse (entry)
   "Create auth-source backend from ENTRY."
-  (message "backend-parse run - %s" entry)
   (when (eq entry 'lastpass)
-    (message "backend-parse lastpass true")
     (auth-source-backend-parse-parameters entry lastpass-auth-source-backend)))
 
 ;; Advice to add custom auth-source function
