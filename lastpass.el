@@ -6,7 +6,7 @@
 ;; URL: https://github.com/storvik/lastpass
 ;; Version: 0.2.0
 ;; Created: 2017-02-17
-;; Package-Requires: ((emacs "24.4"))
+;; Package-Requires: ((emacs "24.4") (seq "1.9") (cl-lib "0.5"))
 ;; Keywords: extensions processes lpass lastpass
 
 ;; This file is NOT part of GNU Emacs.
@@ -58,9 +58,9 @@
 
 ;;; Code:
 
-(require 'auth-source)
-(require 'cl-lib)
 (require 'seq)
+(require 'cl-lib)
+(require 'auth-source)
 (require 'tree-widget)
 
 (defgroup lastpass nil
