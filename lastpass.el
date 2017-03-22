@@ -36,8 +36,7 @@
 ;; To use this auth-source, LastPass account name must be set to match the host.
 ;; One way to achieve this is to keep a separate group in LastPass called auth-source
 ;; where all hosts are stored.  To enable LastPass auth-source, run
-;; `lastpass-auth-source-enable'.  Thanks to DamienCassou for help, see:
-;; https://github.com/DamienCassou/auth-password-store
+;; `lastpass-auth-source-enable'.
 ;;
 ;; Several functions used for interacting with lpass in Emacs are
 ;; made available to the user through the "M-x" interface.
@@ -89,6 +88,12 @@
   :type 'boolean
   :group 'lastpass)
 
+(defcustom lastpass-agent-timeout nil
+  "LastPass agent timeout in seconds.
+Set to 0 to never quit and nil to not use."
+  :type 'integer
+  :group 'lastpass)
+
 (defvar lastpass-group-completion '()
   "List containing groups.  Gets updated on `lastpass-list-all'.")
 
@@ -131,7 +136,9 @@ and returned string from lpass command."
   (let ((process (start-process-shell-command
                   "lastpass"
                   nil
-                  (concat "LPASS_DISABLE_PINENTRY=1 "
+                  (concat (when lastpass-agent-timeout
+                            (concat "LPASS_AGENT_TIMEOUT=" lastpass-agent-timeout))
+                          "LPASS_DISABLE_PINENTRY=1 "
                           lastpass-shell
                           " -c '"
                           "lpass login "
