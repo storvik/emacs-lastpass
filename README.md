@@ -161,11 +161,11 @@ Continues with update if user is logged in and asks user to log in if not.
 
 ``` emacs-lisp
 (defun lastpass-mu4e-update-mail-and-index (update-function &rest r)
-    (if (lastpass-logged-in)
-        (apply update-function r)
-      (progn
-        (message "LastPass: Not logged in, log in and retry")
-        (lastpass-login))))
+  "Check if user is logged in and run UPDATE-FUNCTION with arguments R."
+  (unless (lastpass-logged-in-p)
+    (lastpass-login)
+    (error "LastPass: Not logged in, log in and retry"))
+  (apply update-function r))
 
 (advice-add 'mu4e-update-mail-and-index :around #'lastpass-mu4e-update-mail-and-index)
 ```
