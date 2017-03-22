@@ -482,7 +482,8 @@ See `auth-source-search' for details on SPEC."
   (message "LastPass: auth-source enabled"))
 
 (defvar lastpass-auth-source-backend
-  (auth-source-backend :source "." ;; not used
+  (auth-source-backend "lastpass"
+                       :source "." ;; not used
                        :type 'lastpass
                        :search-function #'lastpass-auth-source-search)
   "Auth-source backend variable for lastpass.")
