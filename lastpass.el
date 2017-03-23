@@ -172,7 +172,7 @@ Returns nil if not logged in."
 
 ;;;###autoload
 (defun lastpass-logout ()
-  "Log out of lpass.  Does not ask for confirmation."
+  "Log out lpass.  Does not ask for confirmation."
   (interactive)
   (unless (equal (nth 0 (lastpass-runcmd "status")) 0)
     (error "LastPass: Not logged in, no need to log out"))
@@ -245,7 +245,7 @@ Optionally URL and GROUP can be set to nil."
     (when (equal (nth 0 ret) 0)
       (nth 1 ret))))
 
-;; lpass-list-dialog-mode
+;; lastpass-list-dialog-mode
 (defvar lastpass-list-dialog-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map widget-keymap)
@@ -383,7 +383,7 @@ Also update the `lastpass-group-completion' variable by adding groups to list."
                                                 (goto-char (point-min))
                                                 (re-search-forward "\\(id:\\s-\\)\\([0-9]+\\|\\)\\(]\\)")
                                                 (match-string 0)))))
-           (concat str))) ;; (lpass-list-all-make-spaces (- 24 (length str))))))
+           (concat str))) ;; (lastpass-list-all-make-spaces (- 24 (length str))))))
         (replace-regexp-in-string ".+id: " "" (replace-regexp-in-string "].+" "" item))))
 
 (defun lastpass-list-all-item (pass-element)
@@ -396,7 +396,7 @@ Also update the `lastpass-group-completion' variable by adding groups to list."
         :node (item :tag ,(car pass-element)
                     :sample-face bold
                     :format "%{%t%}:\n")
-        ,@(mapcar 'lpass-list-all-item
+        ,@(mapcar 'lastpass-list-all-item
                   (cdr pass-element)))
     ;; Represent a single file with a link widget
     `(link :tag ,(car pass-element)
@@ -424,7 +424,7 @@ Also update the `lastpass-group-completion' variable by adding groups to list."
 If optional argument GROUP is given, only entries in GROUP will be listed."
   (interactive)
   (unless (equal (nth 0 (lastpass-runcmd "status")) 0)
-    (error "LastPass: Not logged in.  Log in with lpass-login to continue"))
+    (error "LastPass: Not logged in.  Log in with lastpass-login to continue"))
   (mapc
    (lambda (x)
      (delete x lastpass-group-completion))

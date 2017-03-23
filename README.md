@@ -62,7 +62,7 @@ Thanks to DamienCassou and his [auth-password-store](https://github.com/DamienCa
 
 # LastPass manager
 
-Interactive lpass manager can be invoked with `M-x lastpass-list-all`.
+Interactive lastpass manager can be invoked with `M-x lastpass-list-all`.
 Actions in `lastpass-list-all`:
 - `n` next line
 - `p` previod line
@@ -143,7 +143,7 @@ printf "Username: Foo\nPassword: bar" | \
 
 ### `lastpass-logged-in-p`
 
-Check if `lpass-user` is logged in.
+Check if `lastpass-user` is logged in.
 Returns `nil` if user not logged in.
 Example usage below.
 
