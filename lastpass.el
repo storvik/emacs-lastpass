@@ -137,7 +137,7 @@ and returned string from lpass command."
                   "lastpass"
                   nil
                   (concat (when lastpass-agent-timeout
-                            (concat "LPASS_AGENT_TIMEOUT=" lastpass-agent-timeout))
+                            (concat "LPASS_AGENT_TIMEOUT=" (shell-quote-argument lastpass-agent-timeout)))
                           "LPASS_DISABLE_PINENTRY=1 "
                           lastpass-shell
                           " -c '"
