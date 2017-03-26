@@ -10,7 +10,9 @@ Also featuring a custom `auth-source` backend allowing LastPass integration.
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-generate-toc again -->
 **Table of Contents**
 
+- [Emacs LastPass](#emacs-lastpass)
 - [Installation](#installation)
+    - [`lastpass-list-all-delimiter`](#lastpass-list-all-delimiter)
 - [Auth-source backend](#auth-source-backend)
 - [LastPass manager](#lastpass-manager)
 - [Function lists](#function-lists)
@@ -45,6 +47,15 @@ The easiest way to install and configure emacs lastpass is to include this in yo
   ;; Enable lastpass custom auth-source
   (lastpass-auth-source-enable))
 ```
+
+## `lastpass-list-all-delimiter`
+
+This variable can be used to customize how emacs-lastpass interacts with the `lpass` command utility `ls` function.
+Should be set to a character that is not to be found in any of the following fields:
+- `id`
+- `account name`
+- `group`
+- `user name`
 
 # Auth-source backend
 

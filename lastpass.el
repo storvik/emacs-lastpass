@@ -94,6 +94,12 @@ Set to 0 to never quit and nil to not use."
   :type 'integer
   :group 'lastpass)
 
+(defcustom lastpass-list-all-delimiter ","
+  "Delimiter used to distinguish between id, account name, group and username.
+Use a character not present in such fields.  Most of the time comma should be usable."
+  :type 'string
+  :group 'lastpass)
+
 (defvar lastpass-group-completion '()
   "List containing groups.  Gets updated on `lastpass-list-all'.")
 
@@ -303,10 +309,8 @@ IGNORE other arguments."
   (let ((line (thing-at-point 'line t)))
     (with-temp-buffer
       (insert line)
-      (goto-char (point-max))
-      (backward-word)
-      (re-search-forward "\\([0-9]+\\)")
-      (match-string 0))))
+      (goto-char (point-min))
+      (thing-at-point 'word))))
 
 (defun lastpass-list-all-getpass ()
   "Display current items password in minibuffer.
@@ -348,43 +352,14 @@ As it uses message to print the password, it will be visible in the *Messages* b
 (defsubst lastpass-list-all-make-element (item)
   "Create a new widget element from ITEM.
 Also update the `lastpass-group-completion' variable by adding groups to list."
-  (cons (concat
-         ;;(with-temp-buffer
-         ;;  (insert item)
-         ;;  (goto-char (point-min))
-         ;;  (re-search-forward "\\([0-9-]+\\s-[0-9:]+\\)")
-         ;;  (match-string 0))
-         ;;(lastpass-list-all-make-spaces 4)
-         (let ((str (replace-regexp-in-string "/" ""
-                                              (with-temp-buffer
-                                                (insert item)
-                                                (goto-char (point-min))
-                                                (re-search-forward "\\([a-z()]+\\s-\\)*\\([a-z()]+\\)?/")
-                                                (match-string 0)))))
-           (add-to-list 'lastpass-group-completion str)
-           (concat str (lastpass-list-all-make-spaces (- 24 (length str)))))
-         (let ((str (replace-regexp-in-string "\\(/\\|\\s-\\[id\\)" ""
-                                              (with-temp-buffer
-                                                (insert item)
-                                                (goto-char (point-min))
-                                                (re-search-forward "/\\(.+\\)\\(\\s-\\[id\\)")
-                                                (match-string 0)))))
-           (concat str (lastpass-list-all-make-spaces (- 30 (length str)))))
-         (let ((str (replace-regexp-in-string "\\(username:\\s-\\|]\\)" ""
-                                              (with-temp-buffer
-                                                (insert item)
-                                                (goto-char (point-min))
-                                                (re-search-forward "\\(username:\\s-\\)\\(.+\\|\\)\\(]\\)")
-                                                (match-string 0)))))
-           (concat str (lastpass-list-all-make-spaces (- 30 (length str)))))
-         (let ((str (replace-regexp-in-string "\\(id:\\s-\\|]\\)" ""
-                                              (with-temp-buffer
-                                                (insert item)
-                                                (goto-char (point-min))
-                                                (re-search-forward "\\(id:\\s-\\)\\([0-9]+\\|\\)\\(]\\)")
-                                                (match-string 0)))))
-           (concat str))) ;; (lastpass-list-all-make-spaces (- 24 (length str))))))
-        (replace-regexp-in-string ".+id: " "" (replace-regexp-in-string "].+" "" item))))
+  (let ((fields (split-string item lastpass-list-all-delimiter)))
+    (add-to-list 'lastpass-group-completion (nth 2 fields))
+    (cons (concat
+           (concat (nth 0 fields) (lastpass-list-all-make-spaces (- 24 (length (nth 0 fields)))))
+           (concat (nth 1 fields) (lastpass-list-all-make-spaces (- 24 (length (nth 1 fields)))))
+           (concat (nth 2 fields) (lastpass-list-all-make-spaces (- 24 (length (nth 2 fields)))))
+           (nth 3 fields))
+          (nth 0 fields))))
 
 (defun lastpass-list-all-item (pass-element)
   "Return a widget to display PASS-ELEMENT in a dialog buffer."
@@ -448,8 +423,8 @@ If optional argument GROUP is given, only entries in GROUP will be listed."
              :indent 0
              :format "\n%v\n"
              ,@(lastpass-list-all-items (split-string (nth 1 (if (not group)
-                                                                 (lastpass-runcmd "ls" "--long")
-                                                               (lastpass-runcmd "ls" "--long" group)))
+                                                                 (lastpass-runcmd "ls" "--format=%ai,%an,%ag,%au")
+                                                               (lastpass-runcmd "ls" "--format=%ai,%an,%ag,%au" group)))
                                                       "\\(\r\n\\|[\n\r]\\)"))))
     (widget-create
      'push-button
