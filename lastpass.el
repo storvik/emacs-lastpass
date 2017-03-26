@@ -439,9 +439,9 @@ If optional argument GROUP is given, only entries in GROUP will be listed."
     ;; Use a L&F that looks like the recentf menu.
     (tree-widget-set-theme "folder")
     (let ((formatstr (concat "--format=%ai"
-                             (shell-quote-argument lastpass-list-all-delimiter) "%an"
-                             (shell-quote-argument lastpass-list-all-delimiter) "%ag"
-                             (shell-quote-argument lastpass-list-all-delimiter) "%au")))
+                             lastpass-list-all-delimiter "%an"
+                             lastpass-list-all-delimiter "%ag"
+                             lastpass-list-all-delimiter "%au")))
       (apply 'widget-create
              `(group
                :indent 0
