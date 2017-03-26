@@ -78,6 +78,11 @@
   :type 'string
   :group 'lastpass)
 
+(defcustom lastpass-multifactor nil
+  "Use multifactor authentication."
+  :type 'boolean
+  :group 'lastpass)
+
 (defcustom lastpass-pass-length 12
   "Default password length when generating passwords."
   :type 'integer
@@ -159,6 +164,8 @@ and returned string from lpass command."
           (if (string-match "invalid" string)
               (concat (read-passwd "Wrong password. LastPass master password: ") "\n")
             (concat (read-passwd "LastPass master password: ") "\n"))))
+       (when (string-match "approval" string)
+         (message "LastPass: Waiting for multifactor authentication."))
        (when (string-match "success" string)
          (message (concat "LastPass: Successfully logged in as " lastpass-user)))))))
 
@@ -419,9 +426,9 @@ If optional argument GROUP is given, only entries in GROUP will be listed."
     ;; Use a L&F that looks like the recentf menu.
     (tree-widget-set-theme "folder")
     (let ((formatstr (concat "--format=%ai"
-                             lastpass-list-all-delimiter "%an"
-                             lastpass-list-all-delimiter "%ag"
-                             lastpass-list-all-delimiter "%au")))
+                             (shell-quote-argument lastpass-list-all-delimiter) "%an"
+                             (shell-quote-argument lastpass-list-all-delimiter) "%ag"
+                             (shell-quote-argument lastpass-list-all-delimiter) "%au")))
       (apply 'widget-create
              `(group
                :indent 0
