@@ -10,9 +10,9 @@ Also featuring a custom `auth-source` backend allowing LastPass integration.
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-generate-toc again -->
 **Table of Contents**
 
-- [Emacs LastPass](#emacs-lastpass)
 - [Installation](#installation)
     - [`lastpass-list-all-delimiter`](#lastpass-list-all-delimiter)
+    - [Multifactor authentication](#multifactor-authentication)
 - [Auth-source backend](#auth-source-backend)
 - [LastPass manager](#lastpass-manager)
 - [Function lists](#function-lists)
@@ -56,6 +56,16 @@ Should be set to a character that is not to be found in any of the following fie
 - `account name`
 - `group`
 - `user name`
+
+## Multifactor authentication
+
+When using multifactor authentication the variable `lastpass-multifactor-use-passcode` must reflect wether the user should be prompted for a passcode or not.
+By default this variable is set to `nil`, hence only authentication without passcode is supported.
+To enable authentication with passcode, add the following to your init (or in `:config` in the configuration example above);
+
+``` emacs-lisp
+(setq lastpass-multifactor-use-passcode t)
+```
 
 # Auth-source backend
 

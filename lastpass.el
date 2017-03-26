@@ -78,8 +78,8 @@
   :type 'string
   :group 'lastpass)
 
-(defcustom lastpass-multifactor nil
-  "Use multifactor authentication."
+(defcustom lastpass-multifactor-use-passcode nil
+  "Use passcode when doing multifactor authentication."
   :type 'boolean
   :group 'lastpass)
 
@@ -148,7 +148,7 @@ and returned string from lpass command."
                   "lastpass"
                   nil
                   (concat (when lastpass-agent-timeout
-                            (concat "LPASS_AGENT_TIMEOUT=" (shell-quote-argument lastpass-agent-timeout)))
+                            (concat "LPASS_AGENT_TIMEOUT=" (shell-quote-argument lastpass-agent-timeout) (shell-quote-argument " ")))
                           "LPASS_DISABLE_PINENTRY=1 "
                           lastpass-shell
                           " -c '"
@@ -158,14 +158,27 @@ and returned string from lpass command."
     (set-process-filter
      process
      (lambda (proc string)
+       ;; Multifactor stuff
+       (if lastpass-multifactor-use-passcode
+           (progn
+             (when (string-match "approval" string)
+               (interrupt-process proc))
+             (when (and (string-match "code" string)
+                        (not (string-match "passcode" string)))
+               (process-send-string
+                proc
+                (if (string-match "invalid" string)
+                    (concat (read-passwd "Wrong authentication code. LastPass multifactor authentication code: ") "\n")
+                  (concat (read-passwd "LastPass multifactor authentication code: ") "\n")))))
+         (when (string-match "approval" string)
+           (message "LastPass: Waiting for multifactor authentication.")))
+       ;; No multifactor stuff
        (when (string-match "password" string)
          (process-send-string
           proc
           (if (string-match "invalid" string)
               (concat (read-passwd "Wrong password. LastPass master password: ") "\n")
             (concat (read-passwd "LastPass master password: ") "\n"))))
-       (when (string-match "approval" string)
-         (message "LastPass: Waiting for multifactor authentication."))
        (when (string-match "success" string)
          (message (concat "LastPass: Successfully logged in as " lastpass-user)))))))
 
