@@ -418,14 +418,18 @@ If optional argument GROUP is given, only entries in GROUP will be listed."
                            "\tq quit\n"))
     ;; Use a L&F that looks like the recentf menu.
     (tree-widget-set-theme "folder")
-    (apply 'widget-create
-           `(group
-             :indent 0
-             :format "\n%v\n"
-             ,@(lastpass-list-all-items (split-string (nth 1 (if (not group)
-                                                                 (lastpass-runcmd "ls" "--format=%ai,%an,%ag,%au")
-                                                               (lastpass-runcmd "ls" "--format=%ai,%an,%ag,%au" group)))
-                                                      "\\(\r\n\\|[\n\r]\\)"))))
+    (let ((formatstr (concat "--format=%ai"
+                             lastpass-list-all-delimiter "%an"
+                             lastpass-list-all-delimiter "%ag"
+                             lastpass-list-all-delimiter "%au")))
+      (apply 'widget-create
+             `(group
+               :indent 0
+               :format "\n%v\n"
+               ,@(lastpass-list-all-items (split-string (nth 1 (if (not group)
+                                                                   (lastpass-runcmd "ls" formatstr)
+                                                                 (lastpass-runcmd "ls" formatstr group)))
+                                                        "\\(\r\n\\|[\n\r]\\)")))))
     (widget-create
      'push-button
      :notify 'lastpass-list-cancel-dialog
