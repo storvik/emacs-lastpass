@@ -21,6 +21,7 @@ Also featuring a custom `auth-source` backend allowing LastPass integration.
         - [`lastpass-logout`](#lastpass-logout)
         - [`lastpass-status`](#lastpass-status)
         - [`lastpass-getpass (account)`](#lastpass-getpass-account)
+        - [`lastpass-visit-url (account)`](#lastpass-visit-url-account)
         - [`lastpass-addpass (account user password url group)`](#lastpass-addpass-account-user-password-url-group)
         - [`lastpass-auth-source-enable`](#lastpass-auth-source-enable)
     - [Other functions](#other-functions)
@@ -85,6 +86,7 @@ Thanks to DamienCassou and his [auth-password-store](https://github.com/DamienCa
 
 Interactive lastpass manager can be invoked with `M-x lastpass-list-all`.
 Actions in `lastpass-list-all`:
+- `enter` open URL in browser
 - `n` next line
 - `p` previod line
 - `r` reload accounts
@@ -121,6 +123,11 @@ Check if `lastpass-user` is logged in and prints message to minibuffer.
 
 Display password for given account.
 `account` can be either account id or account name.
+
+### `lastpass-visit-url (account)`
+
+Open URL in web browser.
+If run interactively it prompts for account, which can be either account name or unique ID.
 
 ### `lastpass-addpass (account user password url group)`
 

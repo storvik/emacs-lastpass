@@ -105,6 +105,15 @@ Use a character not present in such fields.  Most of the time comma should be us
   :type 'string
   :group 'lastpass)
 
+(defcustom lastpass-browser "eww"
+  "Variable describing which browser to be used when opening urls.
+Can be set to eww or generic, where generic means open in external browser."
+  :type '(choice
+          (const :tag "Emacs Browser (EWW)" "eww")
+          (const :tag "External Browser" "generic")
+          string)
+  :group 'lastpass)
+
 (defvar lastpass-group-completion '()
   "List containing groups.  Gets updated on `lastpass-list-all'.")
 
@@ -222,6 +231,19 @@ If run interactively PRINT-MESSAGE gets set and password is printed to minibuffe
       (message "LastPass: Something went wrong, could not get password."))))
 
 ;;;###autoload
+(defun lastpass-visit-url (account)
+  "Visit url associated with ACCOUNT, which can be account name of unique id."
+  (interactive "MLastPass account: ")
+  (unless (lastpass-logged-in-p)
+    (error "LastPass: Not logged in"))
+  (let ((url (nth 1 (lastpass-runcmd "show" "--url" account))))
+    (unless url
+      (error "LastPass: No URL for given account / Account does not exist"))
+    (if (string-equal lastpass-browser "generic")
+        (browse-url-generic url)
+      (browse-web url))))
+
+;;;###autoload
 (defun lastpass-addpass (account user password url group)
   "Add account ACCOUNT with USER and PASSWORD to LastPass.
 Optionally URL and GROUP can be set to nil."
@@ -322,7 +344,7 @@ IGNORE arguments."
   "Do action to element associated with WIDGET's value.
 IGNORE other arguments."
   ;;(kill-buffer (current-buffer))
-  (funcall 'message "Item pressed: %s" (widget-value widget)))
+  (funcall 'lastpass-visit-url (widget-value widget)))
 
 (defsubst lastpass-list-all-get-element-id ()
   "Get id from line in dialog widget."
@@ -427,6 +449,7 @@ If optional argument GROUP is given, only entries in GROUP will be listed."
   (lastpass-list-dialog "*lastpass-list*"
     (widget-insert (concat "LastPass list mode.\n"
                            "Usage:\n"
+                           "\t<enter> open URL\n"
                            "\tn next line\n"
                            "\tp previous line\n"
                            "\tr reload accounts\n"
