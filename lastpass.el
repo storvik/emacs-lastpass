@@ -46,6 +46,7 @@
 ;; - `lastpass-status'
 ;; - `lastpass-getpass'
 ;; - `lastpass-addpass'
+;; - `lastpass-visit-url'
 ;; These functions can also used in elisp when configuring Emacs.
 ;;
 ;; A lpass manager is available by running `lastpass-list-all'.
