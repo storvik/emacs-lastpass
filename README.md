@@ -74,10 +74,12 @@ LastPass auth-source backend can be enabled with the function `(lastpass-auth-so
 Host, in emacs, must match the LastPass account name to make this work.
 Recommended way of achieving this is to keep a seperate group, for example auth-source, containing all accounts that should be used together with the auth-source backend.
 Configuration example can be seen in the [Example usage](#example-usage) section.
-To implement this an advice is used:
+To implement this an advice is used, note that support for the newer `'auth-source-backend-parser-functions` is also included:
 
 ``` emacs-lisp
-(advice-add 'auth-source-backend-parse :before-until #'lastpass-auth-source-backend-parse)
+(if (boundp 'auth-source-backend-parser-functions)
+    (add-hook 'auth-source-backend-parser-functions #'lastpass-auth-source-backend-parse)
+  (advice-add 'auth-source-backend-parse :before-until #'lastpass-auth-source-backend-parse))
 ```
 
 Thanks to DamienCassou and his [auth-password-store](https://github.com/DamienCassou/auth-password-store) for help and guidance.
