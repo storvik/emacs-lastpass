@@ -23,6 +23,7 @@ Also featuring a custom `auth-source` backend allowing LastPass integration.
         - [`lastpass-getpass (account)`](#lastpass-getpass-account)
         - [`lastpass-visit-url (account)`](#lastpass-visit-url-account)
         - [`lastpass-addpass (account user password url group)`](#lastpass-addpass-account-user-password-url-group)
+        - [`lastpass-create-auth-source-account (account hostname)`](#lastpass-create-auth-source-account-account-hostname)
         - [`lastpass-auth-source-enable`](#lastpass-auth-source-enable)
     - [Other functions](#other-functions)
         - [`lastpass-runcmd (cmd &rest args)`](#lastpass-runcmd-cmd-rest-args)
@@ -82,7 +83,9 @@ To implement this an advice is used, note that support for the newer `'auth-sour
   (advice-add 'auth-source-backend-parse :before-until #'lastpass-auth-source-backend-parse))
 ```
 
-Thanks to DamienCassou and his [auth-password-store](https://github.com/DamienCassou/auth-password-store) for help and guidance.
+To ease the process of creating a valid auth-source entry in LastPass, the helper function `lastpass-create-auth-source-account` should be used.
+
+Thanks to Damien Cassou and his [auth-password-store](https://github.com/DamienCassou/auth-password-store) for help and guidance.
 
 # LastPass manager
 
@@ -96,6 +99,7 @@ Actions in `lastpass-list-all`:
 - `s` show password
 - `w` add password to kill ring
 - `m` move account to group
+- `c` create auth-source from account
 - `d` delete account
 - `q` quit
 
@@ -138,6 +142,13 @@ Account name, user and password must be specified, but url and group can be set 
 When run interactively user is prompted for input.
 If password is set to `nil`, or empty string when run interactive, it will be generated.
 Default length is set in `lastpass-pass-length` and no symbols can be turned on with `lastpass-no-symbols`.
+
+### `lastpass-create-auth-source-account (account hostname)`
+
+Create a copy of the given account and rename it with the given hostname.
+All auth-source accounts are stored in the `auth-source` group in lastpass.
+This function is meant to simplyfy the process of creating a valid auth-sourec entry in LastPass.
+When using this function in `lastpass-list-all`, see `lastpass-list-all-create-auth-source-account`.
 
 ### `lastpass-auth-source-enable`
 

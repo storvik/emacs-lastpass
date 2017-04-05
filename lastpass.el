@@ -245,6 +245,25 @@ If run interactively PRINT-MESSAGE gets set and password is printed to minibuffe
       (browse-web url))))
 
 ;;;###autoload
+(defun lastpass-create-auth-source-account (account hostname)
+  "Copy ACCOUNT, change name to HOSTNAME and move to auth-source group.
+Simplyfies the process of creating a valid auth-source entry from lastpass account."
+  (interactive "MLastPass account: \nMHostname: ")
+  (unless (lastpass-logged-in-p)
+    (error "LastPass: Not logged in"))
+  (let ((ret (lastpass-runcmd "show" account)))
+    (unless (equal (nth 0 ret) 0)
+      (error "LastPass: Account not found"))
+    (with-temp-buffer
+      (insert (nth 1 ret))
+      (goto-char (point-min))
+      (kill-line)
+      (let ((auth-account (concat "auth-source" "/" hostname)))
+        (unless (equal (nth 0 (lastpass-pipe-to-cmd "add" (buffer-string) auth-account)) 0)
+          (error "LastPass: Could not add account"))
+        (message "LastPass: Added account %s as auth %s" account auth-account)))))
+
+;;;###autoload
 (defun lastpass-addpass (account user password url group)
   "Add account ACCOUNT with USER and PASSWORD to LastPass.
 Optionally URL and GROUP can be set to nil."
@@ -305,6 +324,7 @@ Optionally URL and GROUP can be set to nil."
     (define-key map "s" 'lastpass-list-all-getpass)
     (define-key map "w" 'lastpass-list-all-kill-ring-save)
     (define-key map "m" 'lastpass-list-all-movepass)
+    (define-key map "c" 'lastpass-list-all-create-auth-source-account)
     (define-key map "d" 'lastpass-list-all-deletepass)
     (define-key map "q" 'lastpass-list-cancel-dialog)
     map)
@@ -388,6 +408,12 @@ As it uses message to print the password, it will be visible in the *Messages* b
       (message "LastPass: Successfully moved account, updating list.")))
   (lastpass-list-all-reload))
 
+(defun lastpass-list-all-create-auth-source-account ()
+  "Create auth-source entry from password."
+  (interactive)
+  (let ((id (lastpass-list-all-get-element-id)))
+    (lastpass-create-auth-source-account id (read-string "LastPass: Enter hostname for auth-source: "))))
+
 (defsubst lastpass-list-all-make-spaces (spaces)
   "Create a string with SPACES number of whitespaces."
   (mapconcat 'identity (make-list spaces " ") ""))
@@ -458,6 +484,7 @@ If optional argument GROUP is given, only entries in GROUP will be listed."
                            "\ts show password\n"
                            "\tw add password to kill ring\n"
                            "\tm move account to group\n"
+                           "\tc create auth-source from account\n"
                            "\td delete account\n"
                            "\tq quit\n"))
     ;; Use a L&F that looks like the recentf menu.
