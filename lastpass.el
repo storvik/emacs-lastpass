@@ -217,6 +217,21 @@ Returns nil if not logged in."
   (message "LastPass: Successfully logged out."))
 
 ;;;###autoload
+(defun lastpass-getuser (account &optional print-message)
+  "Get username associated with ACCOUNT.
+If run interactively PRINT-MESSAGE gets set and username is printed to minibuffer."
+  (interactive "MLastPass account name: \np")
+  (unless (equal (nth 0 (lastpass-runcmd "status")) 0)
+    (error "LastPass: Not logged in"))
+  (let ((ret (lastpass-runcmd "show" "--username" account)))
+    (if (equal (nth 0 ret) 0)
+        (progn
+          (when print-message
+            (message "LastPass: Username for account %s is: %s" account (nth 1 ret)))
+          (nth 1 ret))
+      (message "LastPass: Something went wrong, could not get username."))))
+
+;;;###autoload
 (defun lastpass-getpass (account &optional print-message)
   "Get password associated with ACCOUNT.
 If run interactively PRINT-MESSAGE gets set and password is printed to minibuffer."
@@ -230,6 +245,21 @@ If run interactively PRINT-MESSAGE gets set and password is printed to minibuffe
             (message "LastPass: Password for account %s is: %s" account (nth 1 ret)))
           (nth 1 ret))
       (message "LastPass: Something went wrong, could not get password."))))
+
+;;;###autoload
+(defun lastpass-getfield (field account &optional print-message)
+  "Get custom field associated with ACCOUNT.
+If run interactively PRINT-MESSAGE gets set and custom field is printed to minibuffer."
+  (interactive "MLastPass account name: \np")
+  (unless (equal (nth 0 (lastpass-runcmd "status")) 0)
+    (error "LastPass: Not logged in"))
+  (let ((ret (lastpass-runcmd "show" (concat "--field=" field) account)))
+    (if (equal (nth 0 ret) 0)
+        (progn
+          (when print-message
+            (message "LastPass: %s for account %s is: %s" field account (nth 1 ret)))
+          (nth 1 ret))
+      (message "LastPass: Something went wrong, could not get %s." field))))
 
 ;;;###autoload
 (defun lastpass-visit-url (account)
