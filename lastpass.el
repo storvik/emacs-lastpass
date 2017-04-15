@@ -448,15 +448,27 @@ As it uses message to print the password, it will be visible in the *Messages* b
   "Create a string with SPACES number of whitespaces."
   (mapconcat 'identity (make-list spaces " ") ""))
 
+(defsubst lastpass-pad-to-width (item width)
+  "Create a string with ITEM padded to WIDTH."
+  (if (= (length item) width)
+      item
+    (if (>= (length item) width)
+        (concat (substring item 0 (- width 1)) "…")
+      (concat item (lastpass-list-all-make-spaces (- width (length item)))))))
+
 (defsubst lastpass-list-all-make-element (item)
   "Create a new widget element from ITEM.
 Also update the `lastpass-group-completion' variable by adding groups to list."
   (let ((fields (split-string item lastpass-list-all-delimiter)))
     (add-to-list 'lastpass-group-completion (nth 2 fields))
     (cons (concat
-           (concat (nth 0 fields) (lastpass-list-all-make-spaces (- 24 (length (nth 0 fields)))))
-           (concat (nth 1 fields) (lastpass-list-all-make-spaces (- 24 (length (nth 1 fields)))))
-           (concat (nth 2 fields) (lastpass-list-all-make-spaces (- 24 (length (nth 2 fields)))))
+           (lastpass-pad-to-width (nth 0 fields) 24)
+           (lastpass-pad-to-width
+            (if (string-prefix-p "Generated Password for " (nth 1 fields))
+                (concat "…" (substring (nth 1 fields) 23))
+              (nth 1 fields))
+            24)
+           (lastpass-pad-to-width (nth 2 fields) 24)
            (nth 3 fields))
           (nth 0 fields))))
 
