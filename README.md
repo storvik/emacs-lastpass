@@ -20,7 +20,9 @@ Also featuring a custom `auth-source` backend allowing LastPass integration.
         - [`lastpass-login`](#lastpass-login)
         - [`lastpass-logout`](#lastpass-logout)
         - [`lastpass-status`](#lastpass-status)
+        - [`lastpass-getfield (field account)`](#lastpass-getfield-field-account)
         - [`lastpass-getpass (account)`](#lastpass-getpass-account)
+        - [`lastpass-getuser (account)`](#lastpass-getuser-account)
         - [`lastpass-visit-url (account)`](#lastpass-visit-url-account)
         - [`lastpass-addpass (account user password url group)`](#lastpass-addpass-account-user-password-url-group)
         - [`lastpass-create-auth-source-account (account hostname)`](#lastpass-create-auth-source-account-account-hostname)
@@ -125,9 +127,19 @@ Good practice to do this whenever lpass functions aren't needed.
 
 Check if `lastpass-user` is logged in and prints message to minibuffer.
 
+### `lastpass-getfield (field account)`
+
+Display custom field for given account.
+`field` should match field from LastPass and `account` can be either account id or account name.
+
 ### `lastpass-getpass (account)`
 
 Display password for given account.
+`account` can be either account id or account name.
+
+### `lastpass-getuser (account)`
+
+Display username for given account.
 `account` can be either account id or account name.
 
 ### `lastpass-visit-url (account)`

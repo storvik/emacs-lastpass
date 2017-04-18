@@ -248,7 +248,7 @@ If run interactively PRINT-MESSAGE gets set and password is printed to minibuffe
 
 ;;;###autoload
 (defun lastpass-getfield (field account &optional print-message)
-  "Get custom field associated with ACCOUNT.
+  "Get custom FIELD associated with ACCOUNT.
 If run interactively PRINT-MESSAGE gets set and custom field is printed to minibuffer."
   (interactive "MLastPass account name: \np")
   (unless (equal (nth 0 (lastpass-runcmd "status")) 0)
