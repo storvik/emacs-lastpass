@@ -40,7 +40,7 @@ Also featuring a custom `auth-source` backend allowing LastPass integration.
 
 # Installation
 
-To use this package the [LastPass CLI](https://github.com/lastpass/lastpass-cli) must be installed.
+To use this package [LastPass CLI](https://github.com/lastpass/lastpass-cli) version 1.1.0 or newer must be installed.
 The easiest way to install and configure emacs lastpass is to include this in your init.
 
 ``` emacs-lisp
