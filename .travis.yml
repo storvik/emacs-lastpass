@@ -1,16 +1,25 @@
 language: emacs-lisp
 sudo: false
-cache: apt
+cahce: apt
+
 env:
+  - EVM_EMACS=emacs-24.5-travis
   - EVM_EMACS=emacs-25.1-travis
   - EVM_EMACS=emacs-25.2-travis
   - EVM_EMACS=emacs-git-snapshot-travis
+
 before_install:
-  - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > travis.sh && source ./travis.sh
+  - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
   - evm install $EVM_EMACS --use --skip
   - cask
+
 install:
   - cask install
+
+matrix:
+  allow_failures:
+    - env: EVM_EMACS=emacs-git-snapshot-travis
+
 script:
   - emacs --version
   - make test
