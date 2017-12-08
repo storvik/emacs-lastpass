@@ -614,20 +614,20 @@ See `auth-source-search' for details on SPEC."
   (advice-add 'auth-source-backend-parse :before-until #'lastpass-auth-source-backend-parse))
 
 ;; Check lastpass command line interface version and notify user if incompatible
-(let ((versionstring (lastpass-version)))
-  (let ((lpass-incompatible nil))
-    (string-match "\\([0-9]+\.[0-9]+\.[0-9]+\\)" versionstring)
-    (let ((current (split-string (match-string 1 versionstring) "\\.")))
-      (let ((minimal (split-string lastpass-min-version "\\.")))
-        (when (< (string-to-number (concat (nth 0 current)
-                                           (nth 1 current)
-                                           (nth 2 current)))
-                 (string-to-number (concat (nth 0 minimal)
-                                           (nth 1 minimal)
-                                           (nth 2 minimal))))
-          (setq lpass-incompatible t))))
-    (when lpass-incompatible
-      (message "Lastpass: lpass version not compatible."))))
+;;(let ((versionstring (lastpass-version)))
+;;  (let ((lpass-incompatible nil))
+;;    (string-match "\\([0-9]+\.[0-9]+\.[0-9]+\\)" versionstring)
+;;    (let ((current (split-string (match-string 1 versionstring) "\\.")))
+;;      (let ((minimal (split-string lastpass-min-version "\\.")))
+;;        (when (< (string-to-number (concat (nth 0 current)
+;;                                           (nth 1 current)
+;;                                           (nth 2 current)))
+;;                 (string-to-number (concat (nth 0 minimal)
+;;                                           (nth 1 minimal)
+;;                                           (nth 2 minimal))))
+;;          (setq lpass-incompatible t))))
+;;    (when lpass-incompatible
+;;      (message "Lastpass: lpass version not compatible.")))))
 
 (provide 'lastpass)
 ;;; lastpass.el ends here
