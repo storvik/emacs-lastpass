@@ -25,6 +25,7 @@ Also featuring a custom `auth-source` backend allowing LastPass integration.
         - [`lastpass-getuser (account)`](#lastpass-getuser-account)
         - [`lastpass-visit-url (account)`](#lastpass-visit-url-account)
         - [`lastpass-addpass (account user password url group)`](#lastpass-addpass-account-user-password-url-group)
+        - [`lastpass-version`](#lastpass-version)
         - [`lastpass-create-auth-source-account (account hostname)`](#lastpass-create-auth-source-account-account-hostname)
         - [`lastpass-auth-source-enable`](#lastpass-auth-source-enable)
     - [Other functions](#other-functions)
@@ -154,6 +155,10 @@ Account name, user and password must be specified, but url and group can be set 
 When run interactively user is prompted for input.
 If password is set to `nil`, or empty string when run interactive, it will be generated.
 Default length is set in `lastpass-pass-length` and no symbols can be turned on with `lastpass-no-symbols`.
+
+### `lastpass-version`
+
+Display lastpass command line interface version.
 
 ### `lastpass-create-auth-source-account (account hostname)`
 
