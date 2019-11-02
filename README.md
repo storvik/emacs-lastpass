@@ -106,6 +106,12 @@ Actions in `lastpass-list-all`:
 - `d` delete account
 - `q` quit
 
+# Hooks
+
+## `lastpass-logged-in-hook`
+
+Hook run on successful login.
+
 # Function lists
 
 List of functions in this package.
