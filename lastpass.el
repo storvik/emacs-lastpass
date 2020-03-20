@@ -577,7 +577,7 @@ If optional argument GROUP is given, only entries in GROUP will be listed."
 (cl-defun lastpass-auth-source-search (&rest spec
                                              &key backend type host user port
                                              &allow-other-keys)
-  "Given a property list SPEC, return search matches from the :backend.
+  "Given a property list SPEC, return search matches from the BACKEND.
 See `auth-source-search' for details on SPEC."
   (cl-assert (or (null type) (eq type (oref backend type)))
              t "Invalid search: %s %s")
@@ -620,22 +620,6 @@ See `auth-source-search' for details on SPEC."
 (if (boundp 'auth-source-backend-parser-functions)
     (add-hook 'auth-source-backend-parser-functions #'lastpass-auth-source-backend-parse)
   (advice-add 'auth-source-backend-parse :before-until #'lastpass-auth-source-backend-parse))
-
-;; Check lastpass command line interface version and notify user if incompatible
-;;(let ((versionstring (lastpass-version)))
-;;  (let ((lpass-incompatible nil))
-;;    (string-match "\\([0-9]+\.[0-9]+\.[0-9]+\\)" versionstring)
-;;    (let ((current (split-string (match-string 1 versionstring) "\\.")))
-;;      (let ((minimal (split-string lastpass-min-version "\\.")))
-;;        (when (< (string-to-number (concat (nth 0 current)
-;;                                           (nth 1 current)
-;;                                           (nth 2 current)))
-;;                 (string-to-number (concat (nth 0 minimal)
-;;                                           (nth 1 minimal)
-;;                                           (nth 2 minimal))))
-;;          (setq lpass-incompatible t))))
-;;    (when lpass-incompatible
-;;      (message "Lastpass: lpass version not compatible.")))))
 
 (provide 'lastpass)
 ;;; lastpass.el ends here
