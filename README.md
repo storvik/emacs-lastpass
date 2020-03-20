@@ -1,7 +1,7 @@
 # Emacs LastPass
 
 [![MELPA](https://melpa.org/packages/lastpass-badge.svg)](https://melpa.org/#/lastpass)
-![CI](https://github.com/storvik/emacs-lastpass/workflows/CI/badge.svg)
+[![CI](https://github.com/storvik/emacs-lastpass/workflows/CI/badge.svg)](https://github.com/storvik/emacs-lastpass/actions)
 
 A lastpass command wrapper for Emacs.
 Includes an interactive LastPass mode for managing accounts and some useful functions which can be used to include LastPass in your settings and configurations.
