@@ -49,6 +49,7 @@ The easiest way to install and configure emacs lastpass is to include this in yo
   :config
   ;; Set lastpass user
   (setq lastpass-user "foobar@foobar.com")
+  (setq lastpass-trust-login t)
   ;; Enable lastpass custom auth-source
   (lastpass-auth-source-enable))
 ```
@@ -124,6 +125,7 @@ Functions that can be run interactively by the `M-x` interface.
 
 Runs lpass login asynchronously and asks user for password.
 Note that since this is an asynchronous process it will NOT wait for user input to continue.
+If `lastpass-trust-login` is non nil the `--trust` option will be added, and all subsequent login request will not require multifactor authentication.
 
 ### `lastpass-logout`
 

@@ -87,6 +87,11 @@
   :type 'boolean
   :group 'lastpass)
 
+(defcustom lastpass-trust-login nil
+  "Log in with the trust option, causing subsequent logins to not require MFA."
+  :type 'boolean
+  :group 'lastpass)
+
 (defcustom lastpass-pass-length 12
   "Default password length when generating passwords."
   :type 'integer
@@ -186,6 +191,8 @@ If run interactively PRINT-MESSAGE gets set and version is printed to minibuffer
                           lastpass-shell
                           " -c '"
                           "lpass login "
+                          (when lastpass-trust-login
+                            "--trust ")
                           lastpass-user
                           "'"))))
     (set-process-filter
